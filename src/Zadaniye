@@ -31,7 +31,7 @@ eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQ
 Создание Отеля Админом (Токен в задание - это токен, что был при тестирование при тестирование, при вашем тестирование замените его на ваш)
 Invoke-RestMethod -Uri "http://localhost:8080/api/hotels" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"name":"Hotel","address":"Street 1"}'
 
-Создание комнаты
+Создание комнаты (токен админа)
 Invoke-RestMethod -Uri "http://localhost:8080/api/rooms" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"hotelId":1,"number":"101"}'
 Пример вывода
 id name        address
@@ -76,7 +76,7 @@ createdAt : 2026-11-09T20:53:54.509841
 requestId : req-1
 
 Если попробовать
-зарегестрироваться в комнате, когда hotel-service лежит будет выведен следуюзий код
+зарегестрироваться в комнате, когда hotel-service лежит будет выведен следующий код
 PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=false" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQ2NjI5LCJleHAiOjE3OTQyNTAyMjl9.ihwU-hjYko8Iij_5m77t76CK5YkO54tGXXub4FweP98"} -Body '{"roomId":1,"startDate":"2026-06-01","endDate":"2026-06-05","requestId":"req-2"}'
 
 id        : 2
@@ -191,3 +191,26 @@ Invoke-RestMethod : Удаленный сервер возвратил ошиб�
     + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
 
 Ошибка 500 ожидаемый вывод, так как сервер не может его найти
+Проверка истории сообщений (токен пользователя)
+Invoke-RestMethod -Uri "http://localhost:8080/bookings" -Method Get -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjU4MTc5LCJleHAiOjE3OTQyNjE3Nzl9.Vdnq-u9V4h5uxe0ettFytvgxInhX-AB16m8X7QUPJg0"}
+Вывод
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/bookings" -Method Get -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjU4MTc5LCJleHAiOjE3OTQyNjE3Nzl9.Vdnq-u9V4h5uxe0ettFytvgxInhX-AB16m8X7QUPJg0"}
+
+
+id        : 1
+userId    : 2
+roomId    : 1
+startDate : 2026-01-01
+endDate   : 2026-01-05
+status    : CONFIRMED
+createdAt : 2026-11-10T00:05:20.030352
+requestId : req-1
+
+id        : 2
+userId    : 2
+roomId    : 2
+startDate : 2026-01-06
+endDate   : 2026-01-10
+status    : CANCELLED
+createdAt : 2026-11-10T00:05:20.104324
+requestId : req-2

@@ -33,9 +33,11 @@ public class BookingController {
     }
 
     @GetMapping("/bookings")
-    public List<Booking> myBookings(Authentication auth) {
-        User user = UserRep.findByUsername(auth.getName());
-        if (user == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    public List<Booking> myBookings(HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        if (username == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        User user = UserRep.findByUsername(username);
+        if (user == null)  throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         return bookingRep.findByUserId(user.getId());
     }
 
