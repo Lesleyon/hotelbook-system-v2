@@ -10,23 +10,17 @@ import reactor.core.publisher.Flux;
 public class RouteConfig {
     @Bean
     public RouteLocator routes() {
-        Route hotelRoute = Route.async()
-                .id("hotel-service")
-                .predicate(exchange -> {
+        Route hotelRoute = Route.async().id("hotel-service").predicate(exchange -> {
                     String path = exchange.getRequest().getPath().value();
                     return path.equals("/api/hotels") || path.startsWith("/api/hotels/");
                 }).uri("lb://HOTEL-SERVICE").build();
 
-        Route roomsRoute = Route.async()
-                .id("hotel-rooms-public")
-                .predicate(exchange -> {
+        Route roomsRoute = Route.async().id("hotel-rooms-public").predicate(exchange -> {
                     String path = exchange.getRequest().getPath().value();
                     return path.equals("/api/rooms") || path.equals("/api/rooms/recommend");
                 }).uri("lb://HOTEL-SERVICE").build();
 
-        Route bookingRoute = Route.async()
-                .id("booking-service")
-                .predicate(exchange -> {
+        Route bookingRoute = Route.async().id("booking-service").predicate(exchange -> {
                     String path = exchange.getRequest().getPath().value();
                     return path.startsWith("/user/") || path.equals("/user") || path.startsWith("/booking/")
                             || path.equals("/booking") || path.startsWith("/bookings/") || path.equals("/bookings");
