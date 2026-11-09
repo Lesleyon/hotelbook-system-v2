@@ -1,0 +1,193 @@
+Надо просто вставить в terminal inteleji
+Создание администратора
+на линукс ситемах надо использовать curl,
+но в данном терминале он работал через раз и если запросы на создание он воспринимал спокойно
+то запросы на показывание пользователей он выдавал ошибку, так как терминал поедал ковычки json
+Для тестирования даны примеры, чтобы созданы мной в таблицы
+Для вашего тестирования надо заменить на токены, что будут созданы на вашем компьюетере и ставить цифру req-n для кажого нового запроса свой
+
+Создание администратора
+Invoke-RestMethod -Uri "http://localhost:8080/user/register" -Method Post -ContentType "application/json" -Body '{"username":"admin","password":"1","role":"ADMIN"}'
+
+
+Создание пользователя
+Invoke-RestMethod -Uri "http://localhost:8080/user/register" -Method Post -ContentType "application/json" -Body '{"username":"testuser","password":"1","role":"USER"}'
+
+
+Вход в администратора
+Invoke-RestMethod -Uri "http://localhost:8080/user/auth" -Method Post -ContentType "application/json" -Body '{"username":"admin","password":"1"}'
+Пример токена из тестирования приложения
+token
+-----
+eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyMzAwMDUsImV4cCI6MTc5NDIzMzYwNX0.ugb0FR6T4yiM3gOrwftDeJLu0fcdRI8w4pBXlgFlHFM_73V9dr2Ggya-N9bLIQUT
+
+Вход в юзера
+Invoke-RestMethod -Uri "http://localhost:8080/user/auth" -Method Post -ContentType "application/json" -Body '{"username":"testuser","password":"1"}'
+пример токена при тестирование
+token
+-----
+eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQwMTA0LCJleHAiOjE3OTQyNDM3MDR9.c0hoSLbVSmXkLQIcAA1cS9MEfbdx38dp3DxnqtI21B36uUsYchhU8cNoXyg8Jfuq
+
+Создание Отеля Админом (Токен в задание - это токен, что был при тестирование при тестирование, при вашем тестирование замените его на ваш)
+Invoke-RestMethod -Uri "http://localhost:8080/api/hotels" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"name":"Hotel","address":"Street 1"}'
+
+Создание комнаты
+Invoke-RestMethod -Uri "http://localhost:8080/api/rooms" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"hotelId":1,"number":"101"}'
+Пример вывода
+id name        address
+-- ----        -------
+ 1 Hotel       Street 1
+
+Проверка комнаты (здесь нужен токен юзера, используется токен из примера, у вас будет другой)
+также стоит отметить что req-n это номер вашего реквеста, и для каждого нового внезависимотсти
+Invoke-RestMethod -Uri "http://localhost:8080/api/rooms" -Method Get -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQ2NjI5LCJleHAiOjE3OTQyNTAyMjl9.ihwU-hjYko8Iij_5m77t76CK5YkO54tGXXub4FweP98"}
+
+Пример вывода
+id                   : 1
+hotelId              : 1
+number               : 101
+available            : True
+timesBooked          : 0
+lastRequestId        :
+lastReleaseRequestId :
+
+Бронирование комнаты
+Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=false" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQ2NjI5LCJleHAiOjE3OTQyNTAyMjl9.ihwU-hjYko8Iij_5m77t76CK5YkO54tGXXub4FweP98"} -Body '{"roomId":1,"startDate":"2026-01-01","endDate":"2026-01-05","requestId":"req-1"}'
+Вывод из примера
+Вывод из примера
+id        : 1
+userId    : 2
+roomId    : 1
+startDate : 2026-01-01
+endDate   : 2026-01-05
+status    : CONFIRMED
+createdAt : 2026-11-09T20:53:54.509841
+requestId : req-1
+
+Если повторить бронь с теме же параметрами
+код выведит те же данные, что были и при первом
+id        : 1
+userId    : 2
+roomId    : 1
+startDate : 2026-01-01
+endDate   : 2026-01-05
+status    : CONFIRMED
+createdAt : 2026-11-09T20:53:54.509841
+requestId : req-1
+
+Если попробовать
+зарегестрироваться в комнате, когда hotel-service лежит будет выведен следуюзий код
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=false" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQ2NjI5LCJleHAiOjE3OTQyNTAyMjl9.ihwU-hjYko8Iij_5m77t76CK5YkO54tGXXub4FweP98"} -Body '{"roomId":1,"startDate":"2026-06-01","endDate":"2026-06-05","requestId":"req-2"}'
+
+id        : 2
+userId    : 2
+roomId    : 1
+startDate : 2026-06-01
+endDate   : 2026-06-05
+status    : CANCELLED
+createdAt : 2026-11-09T21:33:20.0874746
+requestId : req-2
+
+
+Создание пользователя Админом (Токен Администратора)
+Invoke-RestMethod -Uri "http://localhost:8080/user" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"username":"testuser3","password":"3","role":"USER"}'
+пример вывода
+id username  password                                                     role
+-- --------  --------                                                     ----
+ 6 testuser3 $2a$10$sGcAORKWpIaw7zU94h6ZzePEJcLLDVBArGkLsOxcwy5C/Bcjpf.EK USER
+
+
+Повышение пользователя до админа (токен админа)
+Invoke-RestMethod -Uri "http://localhost:8080/user" -Method Patch -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"username":"testuser3","role":"ADMIN"}'
+пример вывода
+id username  password                                                     role
+-- --------  --------                                                     ----
+ 6 testuser3 $2a$10$sGcAORKWpIaw7zU94h6ZzePEJcLLDVBArGkLsOxcwy5C/Bcjpf.EK ADMIN
+
+ Invoke-RestMethod -Uri "http://localhost:8080/user?username=testuser2" -Method Delete -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"}
+
+
+Попытка Создания Пользователем Отеля (Токен пользователя)
+Invoke-RestMethod -Uri "http://localhost:8080/api/hotels" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjQ2NjI5LCJleHAiOjE3OTQyNTAyMjl9.ihwU-hjYko8Iij_5m77t76CK5YkO54tGXXub4FweP98"} -Body '{"name":"MyHotel","address":"Mystreet"}'
+Вывод
+Invoke-RestMethod : Удаленный сервер возвратил ошибку: (401) Несанкционированный.
+строка:1 знак:1
++ Invoke-RestMethod -Uri "http://localhost:8080/api/hotels" -Method Pos ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-RestMethod], WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
+
+Ошибка 401 связана с тем, что только администратор может создавать пользователя, и если она приходит, значит всё правильно было сделано
+
+Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=false" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer ТОКЕН_USER3"} -Body '{"roomId":1,"startDate":"2026-01-02","endDate":"2026-01-04","requestId":"req-5"}'
+
+Попытка бронирования  комнаты на туже дату (токен Юзера из теста)
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/user/register" -Method Post -ContentType "application/json" -Body '{"username":"testuser4","password":"4","role":"USER"}'
+
+token
+-----
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjQiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc5NDI1MjQ1OSwiZXhwIjoxNzk0MjU2MDU5fQ.38IelUz-wu6IYxlKMVEoK7Q3JgkWxUp7A07PMDIHbcc
+
+
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/user/auth" -Method Post -ContentType "application/json" -Body '{"username":"testuser4","password":"4"}'
+
+token
+-----
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjQiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc5NDI1MjQ4NSwiZXhwIjoxNzk0MjU2MDg1fQ.I_9LXrH05MC5GXs2LhGAAHTFSHNjq1KBFSErutKpUow
+
+
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=false" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjQiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc5NDI1MjQ4NSwiZXhwIjoxNzk0MjU2MDg1fQ.I_9LXrH05MC5GXs2LhGAAHTFSHNjq1KBFSErutKpUow"} -Body '{"roomId":1,"startDate":"2026-01-02","endDate":"2026-01-04","requestId":"req-8"}'
+Invoke-RestMethod : Удаленный сервер возвратил ошибку: (409) Конфликт.
+строка:1 знак:1
++ Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=fals ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-RestMethod], WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
+
+Ошибка 409 связана с тем, что комната уже забронирована на эту дату, и если она приходит, значит всё правильно было сделано
+
+Попытка работы autoselect
+Админ (и его токен)
+Invoke-RestMethod -Uri "http://localhost:8080/api/rooms" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHV2YWxvdjIiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTQyNDkzMzgsImV4cCI6MTc5NDI1MjkzOH0.xmjfNKvL8R7iQKilMVzcvrF4jEf7UhlXJSM8iRlxsls"} -Body '{"hotelId":1,"number":"102"}'
+
+
+
+Юзер (и его токен)
+Invoke-RestMethod -Uri "http://localhost:8080/booking?autoSelect=true" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjUyOTk2LCJleHAiOjE3OTQyNTY1OTZ9.3CTma6moJXjcaaxTTAi4yxe-u-4o8K-arAq8mA8yiWU"} -Body '{"startDate":"2026-04-01","endDate":"2026-04-05","requestId":"req-6"}'
+
+
+id        : 3
+userId    : 2
+roomId    : 1
+startDate : 2026-04-01
+endDate   : 2026-04-05
+status    : CONFIRMED
+createdAt : 2026-11-09T22:37:43.8023058
+requestId : req-6
+
+Удаление бронирования (Токен пользователя)
+Invoke-RestMethod -Uri "http://localhost:8080/booking/1" -Method Delete -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjUzMTIzLCJleHAiOjE3OTQyNTY3MjN9.HfLKcrqHENKWZ1p-jLWVG2lvag_OagIxdskhOU9PxUA"}
+Вывод пользователя
+id        : 1
+userId    : 2
+roomId    : 1
+startDate : 2026-01-01
+endDate   : 2026-01-05
+status    : CANCELLED
+createdAt : 2026-11-09T20:53:54.509841
+requestId : req-1
+
+
+Удаление пользователя администратором (токен админа)
+Invoke-RestMethod -Uri "http://localhost:8080/user?username=testuser" -Method Delete -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc5NDI1MzI2MCwiZXhwIjoxNzk0MjU2ODYwfQ.KeDCvfaJWHJWShwGDYfhxfaUQ_v9_1Ds_jGXDfUw8SQ"}
+
+
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/user/auth" -Method Post -ContentType "application/json" -Body '{"username":"testuser","password":"1"}'
+Invoke-RestMethod : Удаленный сервер возвратил ошибку: (500) Внутренняя ошибка сервера.
+строка:1 знак:1
++ Invoke-RestMethod -Uri "http://localhost:8080/user/auth" -Method Post ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-RestMethod], WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
+
+Ошибка 500 ожидаемый вывод, так как сервер не может его найти
