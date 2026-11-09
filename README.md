@@ -78,3 +78,21 @@ hotelservice - основной класс, для запуска модуля �
       4.2.1 - findByAvailableTrueOrderByTimesBookedAscIdAsc() - возвращает свободные номаера
       4.2.2 findByAvailableTrue(); -  возвращает свободные номера, отсортированные по timesBooked
     4.3 PasswordConfig - используется для хеширования в BoockingService
+
+Для тестирования системы
+надо
+первым включить EurekaServer
+затем BoockingService и HotelService
+и после этого APIGateway
+
+Затем перейти в терминал
+и начать проверки
+в Файле Zadaniye.txt 
+лежат команды, и их выводы
+Если используется виндовс
+ Invoke-RestMethod -Uri, это связано с тем, что CURL в WINDOWS 10 "пожирает" ковычки json запросов
+ В ином
+ CURL и CURL.exe
+
+
+
