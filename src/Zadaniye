@@ -214,3 +214,23 @@ endDate   : 2026-01-10
 status    : CANCELLED
 createdAt : 2026-11-10T00:05:20.104324
 requestId : req-2
+
+Вывод рекомендованный комнаты (Токен Юзера)
+PS C:\Users\user\hotelbook-system-v2> Invoke-RestMethod -Uri "http://localhost:8080/api/rooms/recommend" -Method Get -Headers @{Authorization="Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzk0MjU5MzAwLCJleHAiOjE3OTQyNjI5MDB9.S2of4jCfFH3JhM9YtNhQQ-zDZBAgrvPC4yFAz8l4i6A"}
+
+
+id                   : 2
+hotelId              : 1
+number               : 102
+available            : True
+timesBooked          : 0
+lastRequestId        :
+lastReleaseRequestId :
+
+id                   : 1
+hotelId              : 1
+number               : 101
+available            : True
+timesBooked          : 1
+lastRequestId        : req-1
+lastReleaseRequestId :
